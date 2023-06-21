@@ -16,18 +16,25 @@ fn main() {
             break;
         }
 
-        user_input.push(input.trim().parse::<i32>().unwrap());
+        user_input.push(input.trim().parse::<f64>().unwrap());
     }
-    user_input.sort();
+    user_input.sort_by(|a, b| a.partial_cmp(b).unwrap());
     println!("User input: {:?}", user_input);
 
-    let mut sum: i32 = 0;
+    let vecLen = user_input.len();
 
-    for int in user_input.iter(){
-        sum += int;
-    }
+    let mut sum: i8 = 0;
 
-    println!("The sum is: {}", sum)
+    let mut removeNValues = String::new();
+    
+    handle.read_line(&mut removeNValues).expect("Failed to read value, try again");
+
+    let nValue = match removeNValues.trim().parse::<i8>() {
+        Ok(i % 2 == 0) => println!("{} elements will be taken out", i),
+        Err(..) => println!("The input was not an int")
+    };
+
+   
 
 
     // stdin.read_line(&mut user_input);
