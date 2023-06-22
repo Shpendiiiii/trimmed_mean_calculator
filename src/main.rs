@@ -30,7 +30,7 @@ fn main() {
     handle.read_line(&mut removeNValues).expect("Failed to read value, try again");
 
     let nValue = match removeNValues.trim().parse::<i8>() {
-        Ok(i % 2 == 0) => println!("{} elements will be taken out", i),
+        Ok(i) => println!("{} elements will be taken out", i),
         Err(..) => println!("The input was not an int")
     };
 
