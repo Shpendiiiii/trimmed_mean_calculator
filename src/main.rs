@@ -19,15 +19,15 @@ fn main() {
         }
     }
 
-    println!("{} values from the top and bottom will be removed", n_count);
+    println!("\n\n{} values from the top and bottom will be removed", n_count);
 
     slice_vec(&mut user_input, n_count);
 
-    println!("Updated vector: {:?}", user_input);
+    println!("\nUpdated vector: {:?}", user_input);
 
     vec_len = user_input.len();
 
-    let final_result = main_logic(&mut user_input, &mut vec_len);
+    main_logic(&mut user_input, &mut vec_len);
 }
 
 fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
@@ -38,7 +38,8 @@ fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
     }
 
     let final_result: f64 = sum / *vec_len as f64;
-    println!("The trimmed mean is: {}", final_result);
+    println!("{}", "-".repeat(100));
+    println!("{}The trimmed mean is: {}", final_result);
     final_result
 }
 
@@ -81,6 +82,7 @@ fn n_count_checker(mut handle: &mut StdinLock<'static>, vec_len: &usize) -> i64 
 }
 
 fn remove_n_values(handle: &mut StdinLock<'static>) -> i64 {
+    println!("\nHow many values would you like to remove:");
     let mut remove_n_values: String = String::new();
 
     handle.read_line(&mut remove_n_values).expect("Failed to read value, try again");
