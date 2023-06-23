@@ -1,9 +1,15 @@
 //work in progress
 use std::io::StdinLock;
 use std::io::{self, BufRead};
+use serde::Serialize;
+use std::fs::File;
+use std::io::Write;
+use serde_yaml;
+
+
 
 fn main() {
-    let (mut user_input, mut handle) = test_values();
+    let (mut user_input, mut handle, mean_final_result) = test_values();
 
     let mut vec_len: usize = user_input.len();
 
@@ -28,6 +34,12 @@ fn main() {
     vec_len = user_input.len();
 
     main_logic(&mut user_input, &mut vec_len);
+    println!("And the arithmetic mean was: {}", mean_final_result);
+
+    let file = File::create("output.yaml").expect("Failed to create file");
+
+    // Serialize the data to YAML and write it to the file
+    serde_yaml::to_writer(file, &mean_final_result).expect("Failed to write YAML");
 }
 
 fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
@@ -39,7 +51,8 @@ fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
 
     let final_result: f64 = sum / *vec_len as f64;
     println!("{}", "-".repeat(100));
-    println!("{}The trimmed mean is: {}", final_result);
+    println!("{}The trimmed mean is: {}", " ".repeat(40), final_result);
+    println!("{}", "-".repeat(100));
     final_result
 }
 
@@ -50,7 +63,7 @@ fn slice_vec(user_input: &mut Vec<f64>, n_count: i64) {
     user_input.truncate(end_index);
 }
 
-fn test_values() -> (Vec<f64>, StdinLock<'static>) {
+fn test_values() -> (Vec<f64>, StdinLock<'static>, f64) {
     println!("Enter your values:");
     let mut user_input = Vec::new();
     let mut handle = user_input_handle();
@@ -68,7 +81,13 @@ fn test_values() -> (Vec<f64>, StdinLock<'static>) {
     }
     user_input.sort_by(|a, b| a.partial_cmp(b).unwrap());
     println!("User input: {:?}", user_input);
-    (user_input, handle)
+    let mut sum: f64 = 0.0;
+    for i in &user_input{
+        sum = sum + i;
+    }
+    let mean_final_result: f64 = sum / user_input.len() as f64;
+    // println!("the mean {}", mean_final_result);
+    (user_input, handle, mean_final_result)
 }
 
 fn n_count_checker(mut handle: &mut StdinLock<'static>, vec_len: &usize) -> i64 {
