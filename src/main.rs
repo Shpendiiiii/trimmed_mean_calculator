@@ -30,7 +30,7 @@ fn main() {
     let half_vec_length = (vec_len / 2).try_into().unwrap();
 
     while n_count > half_vec_length {
-        println!("\nTry again");
+        println!("\nAt most, you can remove up to {} values. Try again", half_vec_length);
         n_count = n_count_checker(&mut handle, &vec_len);
         if n_count <  half_vec_length{
             break;
@@ -38,6 +38,21 @@ fn main() {
     }
 
     println!("{}", n_count);
+    println!("half of vec len {}", half_vec_length);
+
+    let range = 0..n_count as usize;
+    println!("the ncount after the first slice {}", n_count);
+
+    // println!("the length of the vector is {}", vec_len);
+
+    let final_vec: Vec<f64> = user_input.drain(range).collect();
+    let end_index = user_input.len().saturating_sub(n_count.try_into().unwrap());
+    user_input.truncate(end_index);
+    println!("Removed elements: {:?}", final_vec);
+    // println!("Removed elements: {:?}", final_vec2);
+
+    println!("Updated vector: {:?}", user_input);
+    println!("second updated vector {:?}", user_input);
 
 
 }
