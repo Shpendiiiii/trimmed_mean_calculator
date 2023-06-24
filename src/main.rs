@@ -38,7 +38,7 @@ fn main() {
         println!("\n\n{} values from the top and bottom will be removed", n_count);
 
         slice_vec(&mut user_input, n_count);
-
+        insert_vector(&user_input);
         println!("\nUpdated vector: {:?}", user_input);
 
         vec_len = user_input.len();

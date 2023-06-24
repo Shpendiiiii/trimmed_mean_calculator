@@ -4,6 +4,8 @@ use serde_yaml;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use rand::Rng;
+use std::time::SystemTime;
+use std::fs::File;
 
 #[derive(Serialize)]
 struct SimpleKeyVal{
@@ -13,7 +15,7 @@ struct SimpleKeyVal{
 
 pub fn insert_vector(vec: &Vec<f64>){
     let vals = SimpleKeyVal{
-        key: format!("input_{}", generate_unique_id().to_string()),
+        key: format!("input"),
         val: vec.to_vec(),
     };
 
@@ -23,10 +25,8 @@ pub fn insert_vector(vec: &Vec<f64>){
 
     let yaml = serde_yaml::to_string(&data).unwrap();
 
-    let file = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open("output.yaml");
+    
+    let file = File::create(generate_unique_id());
 
     file.expect("Failed to open file")
         .write_all(yaml.as_bytes())
@@ -34,11 +34,9 @@ pub fn insert_vector(vec: &Vec<f64>){
 }
 
 fn generate_unique_id() -> String {
-    let mut rng = rand::thread_rng();
-
-    // Generate a random number between 0 and 999,999 (inclusive)
-    let random_number = rng.gen_range(0..=999_999);
-
-    // Format the random number as a 6-digit code with leading zeros
-    format!("{:06}", random_number)
+    let timestamp = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("Error")
+        .as_secs();
+    format!("output_{}.yaml", timestamp)
 }
