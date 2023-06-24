@@ -3,24 +3,19 @@ mod write_to_yaml;
 //work in progress
 use std::io::StdinLock;
 use std::io::{self, BufRead};
-use std::process::exit;
 use crate::write_to_yaml::*;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
 
 
 
 fn main() {
-    let running = Arc::new(AtomicBool::new(true));
-    let running_clone = running.clone();
-    ctrlc::set_handler(move || {
-        running_clone.store(false, Ordering::SeqCst);
-    })
-        .expect("Error setting Ctrl-C handler");
-
-    while running.load(Ordering::SeqCst) {
+    loop {
         let (mut user_input, mut handle, mean_final_result) = test_values();
-        insert_vector(&user_input);
+        let mut file = create_file();
+        match file {
+            Ok(ref _file) => { println!("YAML created successfully. Your input will be written into it")}
+            Err(..) => { println!("YAML creation failed, the program will continue executing")}
+        }
+        insert_vector("input", &user_input, &mut file);
         let mut vec_len: usize = user_input.len();
 
         let mut n_count = n_count_checker(&mut handle, &vec_len);
@@ -38,16 +33,18 @@ fn main() {
         println!("\n\n{} values from the top and bottom will be removed", n_count);
 
         slice_vec(&mut user_input, n_count);
-        insert_vector(&user_input);
+        insert_vector("trimmed_values", &user_input, &mut file);
         println!("\nUpdated vector: {:?}", user_input);
 
         vec_len = user_input.len();
 
-        main_logic(&mut user_input, &mut vec_len);
-        println!("And the arithmetic mean was: {}", mean_final_result);
-    }
+        let final_result = main_logic(&mut user_input, &mut vec_len);
 
-    println!("Exiting")
+        insert_f64("final_result", final_result, &mut file);
+
+        println!("And the arithmetic mean was: {}", mean_final_result);
+        insert_f64("arithmetic_mean", mean_final_result, &mut file);
+    }
 }
 
 fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
@@ -72,7 +69,7 @@ fn slice_vec(user_input: &mut Vec<f64>, n_count: i64) {
 }
 
 fn test_values() -> (Vec<f64>, StdinLock<'static>, f64) {
-    println!("Enter your values:");
+    println!("\n\nEnter your values:");
     let mut user_input = Vec::new();
     let mut handle = user_input_handle();
 
