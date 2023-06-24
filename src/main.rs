@@ -1,45 +1,53 @@
+mod write_to_yaml;
+
 //work in progress
 use std::io::StdinLock;
 use std::io::{self, BufRead};
-use serde::Serialize;
-use std::fs::File;
-use std::io::Write;
-use serde_yaml;
+use std::process::exit;
+use crate::write_to_yaml::*;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 
 
 fn main() {
-    let (mut user_input, mut handle, mean_final_result) = test_values();
+    let running = Arc::new(AtomicBool::new(true));
+    let running_clone = running.clone();
+    ctrlc::set_handler(move || {
+        running_clone.store(false, Ordering::SeqCst);
+    })
+        .expect("Error setting Ctrl-C handler");
 
-    let mut vec_len: usize = user_input.len();
+    while running.load(Ordering::SeqCst) {
+        let (mut user_input, mut handle, mean_final_result) = test_values();
+        insert_vector(&user_input);
+        let mut vec_len: usize = user_input.len();
 
-    let mut n_count = n_count_checker(&mut handle, &vec_len);
+        let mut n_count = n_count_checker(&mut handle, &vec_len);
 
-    let half_vec_length = (vec_len / 2).try_into().unwrap();
+        let half_vec_length = (vec_len / 2).try_into().unwrap();
 
-    while n_count > half_vec_length {
-        println!("\nAt most, you can remove up to {} values. Try again", half_vec_length);
-        n_count = n_count_checker(&mut handle, &vec_len);
-        if n_count < half_vec_length {
-            break;
+        while n_count > half_vec_length {
+            println!("\nAt most, you can remove up to {} values. Try again", half_vec_length);
+            n_count = n_count_checker(&mut handle, &vec_len);
+            if n_count < half_vec_length {
+                break;
+            }
         }
+
+        println!("\n\n{} values from the top and bottom will be removed", n_count);
+
+        slice_vec(&mut user_input, n_count);
+
+        println!("\nUpdated vector: {:?}", user_input);
+
+        vec_len = user_input.len();
+
+        main_logic(&mut user_input, &mut vec_len);
+        println!("And the arithmetic mean was: {}", mean_final_result);
     }
 
-    println!("\n\n{} values from the top and bottom will be removed", n_count);
-
-    slice_vec(&mut user_input, n_count);
-
-    println!("\nUpdated vector: {:?}", user_input);
-
-    vec_len = user_input.len();
-
-    main_logic(&mut user_input, &mut vec_len);
-    println!("And the arithmetic mean was: {}", mean_final_result);
-
-    let file = File::create("output.yaml").expect("Failed to create file");
-
-    // Serialize the data to YAML and write it to the file
-    serde_yaml::to_writer(file, &mean_final_result).expect("Failed to write YAML");
+    println!("Exiting")
 }
 
 fn main_logic(user_input: &mut Vec<f64>, vec_len: &mut usize) -> f64 {
@@ -86,7 +94,6 @@ fn test_values() -> (Vec<f64>, StdinLock<'static>, f64) {
         sum = sum + i;
     }
     let mean_final_result: f64 = sum / user_input.len() as f64;
-    // println!("the mean {}", mean_final_result);
     (user_input, handle, mean_final_result)
 }
 
