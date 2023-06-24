@@ -26,8 +26,8 @@ pub fn insert_vector(vec: &Vec<f64>){
     let yaml = serde_yaml::to_string(&data).unwrap();
 
     
-    let file = File::create(generate_unique_id());
-
+    
+    let file = create_file();
     file.expect("Failed to open file")
         .write_all(yaml.as_bytes())
         .expect("Failed to write to YAML");
@@ -39,4 +39,8 @@ fn generate_unique_id() -> String {
         .expect("Error")
         .as_secs();
     format!("output_{}.yaml", timestamp)
+}
+
+fn create_file(){
+    let file = File::create(generate_unique_id());
 }
