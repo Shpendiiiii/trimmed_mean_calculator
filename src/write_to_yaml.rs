@@ -58,11 +58,11 @@ pub fn generate_unique_id() -> String {
         .duration_since(SystemTime::UNIX_EPOCH)
         .expect("Error")
         .as_secs();
-    format!("output_{}.yaml", timestamp)
+    format!("data/output_{}", timestamp)
 }
 
 pub fn create_file() -> Result<File, Error> {
-    let file_path = generate_unique_id();
+    let file_path = format!("{}.yaml", generate_unique_id());
     let file = File::create(&file_path);
     file
 }
