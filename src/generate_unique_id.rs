@@ -1,5 +1,3 @@
-
-
 use std::time::SystemTime;
 
 pub fn generate_unique_id() -> String {
