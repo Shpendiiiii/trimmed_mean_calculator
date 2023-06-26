@@ -4,7 +4,7 @@ use plotters::prelude::*;
 use crate::write_to_yaml::generate_unique_id;
 
 fn root(fielname: &str) -> DrawingArea<BitMapBackend<'_>, Shift> {
-    let root_drawing_area = BitMapBackend::new(fielname, (1920, 1080));
+    let root_drawing_area = BitMapBackend::new(fielname, (1920, 600));
     let drawing_area = root_drawing_area.into_drawing_area();
     drawing_area.fill(&WHITE).unwrap();
     drawing_area
@@ -20,15 +20,18 @@ pub fn plot(data: Vec<f64>, final_result: f64) {
         .caption("Mean Plot", ("Arial", 30))
         .set_label_area_size(LabelAreaPosition::Bottom, 40)
         .build_cartesian_2d(
-            min as f64..max as f64 + (max as f64 * 0.1 as f64),
+            min as f64 - (min as f64 * 0.1 as f64)..max as f64 + (max as f64 * 0.1 as f64),
             0.0f64..12.0f64,
         )
         .unwrap();
 
     ctx.configure_mesh().draw().unwrap();
+    let line_width = 2;
+    ctx.draw_series(LineSeries::new(data.iter().map(|y| (*y, 0.0)),
+    ShapeStyle::from(GREEN).stroke_width(4),
+    ))
 
-    ctx.draw_series(LineSeries::new(data.iter().map(|y| (*y, 0.0)), &GREEN))
-        .unwrap();
+        ;
 
     let single_point = [(final_result, 0.0)];
 
