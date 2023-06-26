@@ -4,7 +4,7 @@ use plotters::prelude::*;
 use crate::write_to_yaml::generate_unique_id;
 
 fn root(fielname: &str) -> DrawingArea<BitMapBackend<'_>, Shift> {
-    let root_drawing_area = BitMapBackend::new(fielname, (1280, 400));
+    let root_drawing_area = BitMapBackend::new(fielname, (1920, 1080));
     let drawing_area = root_drawing_area.into_drawing_area();
     drawing_area.fill(&WHITE).unwrap();
     drawing_area
