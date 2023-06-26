@@ -28,9 +28,7 @@ pub fn plot(data: Vec<f64>, final_result: f64) {
     let line_width = 2;
     ctx.draw_series(LineSeries::new(data.iter().map(|y| (*y, 0.0)),
     ShapeStyle::from(GREEN).stroke_width(4),
-    ))
-
-        ;
+    )).unwrap();
 
     let single_point = [(final_result, 0.0)];
 
