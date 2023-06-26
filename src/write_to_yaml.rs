@@ -4,8 +4,8 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::Error;
-use std::time::SystemTime;
-//TODO put id into its own separate file
+use crate::generate_unique_id::generate_unique_id;
+
 #[derive(Serialize)]
 struct SimpleKeyVal {
     key: String,
@@ -51,14 +51,6 @@ pub fn insert_f64(desc: &str, result: f64, file: &mut Result<File, Error>) {
         .expect("Failed to open file")
         .write_all(yaml.as_bytes())
         .expect("Failed to write to YAML");
-}
-
-pub fn generate_unique_id() -> String {
-    let timestamp = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .expect("Error")
-        .as_secs();
-    format!("data/output_{}", timestamp)
 }
 
 pub fn create_file() -> Result<File, Error> {

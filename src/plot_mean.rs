@@ -1,7 +1,6 @@
 use plotters::coord::Shift;
 use plotters::prelude::*;
-
-use crate::write_to_yaml::generate_unique_id;
+use crate::generate_unique_id::generate_unique_id;
 
 fn root(fielname: &str) -> DrawingArea<BitMapBackend<'_>, Shift> {
     let root_drawing_area = BitMapBackend::new(fielname, (1920, 600));

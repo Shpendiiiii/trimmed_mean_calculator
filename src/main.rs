@@ -1,5 +1,6 @@
 mod write_to_yaml;
 mod plot_mean;
+mod generate_unique_id;
 
 //work in progress
 use crate::write_to_yaml::*;
