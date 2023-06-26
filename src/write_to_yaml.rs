@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::Error;
 use std::time::SystemTime;
-
+//TODO put id into its own separate file
 #[derive(Serialize)]
 struct SimpleKeyVal {
     key: String,
