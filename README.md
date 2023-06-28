@@ -17,7 +17,7 @@
 1. Run ```cargo run``` (be patient) in the program dir
 2. Give a single value, press enter to supply the next one
 3. Press enter on an empty line to finish supplying values
-4. Give the number of the values you want to remove
+4. Give the number of the values you want to remove, and press enter
 5. The program will supply the trimmed mean, the yaml with the io-s, and the plot for the trimmed mean
 
 ## Happy Rusting
